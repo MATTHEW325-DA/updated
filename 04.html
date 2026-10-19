@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aubrey Ocampo · Virtual Assistant</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Cute & Client-Friendly -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #FF8A9D;
+            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #FFC0CB;
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* ===== SCROLL PROGRESS BAR ===== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #d47a9a, #b34a6e, #FFC0CB);
+            z-index: 99999;
+            transition: width 0.1s ease;
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 10px rgba(212, 122, 154, 0.6);
+        }
+
+        /* ===== PRELOADER ===== */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            background: #FFE6EA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            z-index: 99998;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader .loader-heart {
+            font-size: 3.5rem;
+            color: #b34a6e;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        .preloader .loader-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: #b34a6e;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeInOut 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.25); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.15); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== NEUMORPHISM CONTAINER ===== */
+        .container {
+            max-width: 1150px;
+            width: 100%;
+            margin: 0 auto;
+            background: #FFE6EA;
+            border-radius: 3rem;
+            padding: 2.8rem 3rem;
+            box-shadow: 
+                12px 12px 24px rgba(180, 140, 155, 0.25),
+                -12px -12px 24px rgba(255, 138, 157);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 245, 250, 0.5);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== HEADER ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(180, 140, 155, 0.15);
+            position: sticky;
+            top: 0;
+            background: #FFE6EA;
+            z-index: 1000;
+            border-radius: 0 0 1rem 1rem;
+            transition: box-shadow 0.3s;
+        }
+
+        .top-bar.scrolled {
+            box-shadow: 0 4px 20px rgba(180, 140, 155, 0.15);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #b34a6e, #d47a9a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            font-weight: 600;
+            flex-wrap: wrap;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a2e3b;
+            font-size: 0.88rem;
+            transition: color 0.3s;
+            position: relative;
+            padding: 0.3rem 0;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #c45a7a;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #d47a9a;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* ===== PROFILE ===== */
+        .profile {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2.8rem;
+            margin-bottom: 3rem;
+            padding: 0.5rem 0;
+        }
+
+        .profile-avatar {
+            flex-shrink: 0;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #f0e8ed;
+            box-shadow: 
+                8px 8px 16px rgba(180, 140, 155, 0.2),
+                -8px -8px 16px rgba(255, 245, 250, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 245, 250, 0.6);
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #d47a9a, #b34a6e, #FFE6EA, #d47a9a);
+            z-index: -1;
+            animation: rotateBorder 6s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes rotateBorder {
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.03);
+            box-shadow: 
+                12px 12px 24px rgba(180, 140, 155, 0.3),
+                -12px -12px 24px rgba(255, 245, 250, 0.9);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .profile-avatar:hover img {
+            transform: scale(1.05);
+        }
+
+        .profile-info h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #2d1b26;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .profile-info .tagline {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #b34a6e;
+            margin-bottom: 0.4rem;
+            font-family: 'Poppins', sans-serif;
+            min-height: 1.6em;
+        }
+
+        /* ===== TYPING EFFECT ===== */
+        .typing-text {
+            display: inline-block;
+            border-right: 2px solid #b34a6e;
+            animation: blinkCursor 0.8s step-end infinite;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { border-color: #b34a6e; }
+            50% { border-color: transparent; }
+        }
+
+        .profile-info .bio {
+            max-width: 550px;
+            color: #4a2e3b;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 0.4rem;
+        }
+
+        .social-icons a {
+            color: #4a2e3b;
+            font-size: 1.4rem;
+            transition: all 0.3s;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0e8ed;
+            box-shadow: 
+                4px 4px 8px rgba(180, 140, 155, 0.15),
+                -4px -4px 8px rgba(255, 245, 250, 0.8);
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            color: #c45a7a;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 
+                6px 6px 12px rgba(180, 140, 155, 0.2),
+                -6px -6px 12px rgba(255, 245, 250, 0.9);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.2rem;
+        }
+
+        /* ===== NEUMORPHISM BUTTONS ===== */
+        .btn-neumorph {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            background: #f0e8ed;
+            color: #4a2e3b;
+            box-shadow: 
+                6px 6px 12px rgba(180, 140, 155, 0.2),
+                -6px -6px 12px rgba(255, 245, 250, 0.8);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-neumorph:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                8px 8px 16px rgba(180, 140, 155, 0.25),
+                -8px -8px 16px rgba(255, 245, 250, 0.9);
+        }
+
+        .btn-neumorph.primary {
+            background: linear-gradient(135deg, #d47a9a, #b34a6e);
+            color: white;
+            box-shadow: 
+                6px 6px 12px rgba(180, 140, 155, 0.25),
+                -6px -6px 12px rgba(255, 245, 250, 0.6);
+        }
+
+        .btn-neumorph.primary:hover {
+            box-shadow: 
+                8px 8px 16px rgba(180, 140, 155, 0.3),
+                -8px -8px 16px rgba(255, 245, 250, 0.7);
+            transform: translateY(-3px);
+        }
+
+        .btn-neumorph.secondary {
+            background: transparent;
+            border: 2px solid #d47a9a;
+            color: #b34a6e;
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin: 3rem 0 1.5rem 0;
+            letter-spacing: -0.01em;
+            padding-left: 1.2rem;
+            border-left: 5px solid #d47a9a;
+            color: #2d1b26;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: #8a5e70;
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* ===== NEUMORPHISM CARDS ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .card {
+            background: #f0e8ed;
+            border-radius: 2rem;
+            padding: 1.8rem 1.6rem;
+            box-shadow: 
+                6px 6px 14px rgba(180, 140, 155, 0.15),
+                -6px -6px 14px rgba(255, 245, 250, 0.8);
+            border: 1px solid rgba(255, 245, 250, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 122, 154, 0.06), transparent);
+            transition: left 0.6s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                12px 12px 24px rgba(180, 140, 155, 0.22),
+                -12px -12px 24px rgba(255, 245, 250, 0.9);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #2d1b26;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card .meta {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #8a5e70;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.6rem;
+            text-transform: uppercase;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card p {
+            color: #4a2e3b;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .card i {
+            color: #c45a7a;
+            width: 1.8rem;
+            font-size: 1.1rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover i {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .card .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .card .tools-list .tool-tag {
+            background: rgba(212, 122, 154, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #b34a6e;
+            border: 1px solid rgba(212, 122, 154, 0.2);
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card .tools-list .tool-tag:hover {
+            background: rgba(212, 122, 154, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .card .why-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #d47a9a, #b34a6e);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            margin-top: 0.8rem;
+            letter-spacing: 0.3px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ===== SKILLS ===== */
+        .skills-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .skill-chip {
+            background: #f0e8ed;
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #4a2e3b;
+            transition: all 0.3s;
+            box-shadow: 
+                3px 3px 8px rgba(180, 140, 155, 0.12),
+                -3px -3px 8px rgba(255, 245, 250, 0.7);
+            border: 1px solid rgba(255, 245, 250, 0.3);
+            font-family: 'Poppins', sans-serif;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .skill-chip.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .skill-chip:hover {
+            transform: translateY(-3px) scale(1.05);
+            color: #b34a6e;
+            box-shadow: 
+                5px 5px 12px rgba(180, 140, 155, 0.2),
+                -5px -5px 12px rgba(255, 245, 250, 0.8);
+        }
+
+        /* ===== ABOUT ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .about-text p {
+            color: #4a2e3b;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .stat-box {
+            background: #f0e8ed;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            box-shadow: 
+                4px 4px 10px rgba(180, 140, 155, 0.12),
+                -4px -4px 10px rgba(255, 245, 250, 0.7);
+            transition: all 0.4s;
+            border: 1px solid rgba(255, 245, 250, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 
+                8px 8px 18px rgba(180, 140, 155, 0.2),
+                -8px -8px 18px rgba(255, 245, 250, 0.9);
+        }
+
+        .stat-box .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #b34a6e;
+            display: block;
+            transition: transform 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .stat-box:hover .number {
+            transform: scale(1.1);
+        }
+
+        .stat-box .label {
+            font-size: 0.78rem;
+            color: #8a5e70;
+            margin-top: 0.3rem;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+        }
+
+        /* ===== PROJECT SHOWCASE ===== */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .project-card {
+            background: #f0e8ed;
+            border-radius: 2rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: 
+                6px 6px 14px rgba(180, 140, 155, 0.15),
+                -6px -6px 14px rgba(255, 245, 250, 0.8);
+            border: 1px solid rgba(255, 245, 250, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: #4a2e3b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .project-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 
+                12px 12px 24px rgba(180, 140, 155, 0.22),
+                -12px -12px 24px rgba(255, 245, 250, 0.9);
+            color: #b34a6e;
+        }
+
+        .project-card .project-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #f0e8ed, #e8dce3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #b34a6e;
+            box-shadow: 
+                4px 4px 10px rgba(180, 140, 155, 0.15),
+                -4px -4px 10px rgba(255, 245, 250, 0.7);
+            transition: all 0.4s;
+        }
+
+        .project-card:hover .project-icon {
+            background: linear-gradient(135deg, #d47a9a, #b34a6e);
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .project-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #2d1b26;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .project-card p {
+            font-size: 0.8rem;
+            color: #8a5e70;
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .project-card .arrow-link {
+            font-size: 1.2rem;
+            color: #d47a9a;
+            transition: all 0.3s;
+        }
+
+        .project-card:hover .arrow-link {
+            transform: translateX(8px);
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .testimonial-card {
+            background: #f0e8ed;
+            padding: 1.8rem;
+            border-radius: 2rem;
+            box-shadow: 
+                6px 6px 14px rgba(180, 140, 155, 0.15),
+                -6px -6px 14px rgba(255, 245, 250, 0.8);
+            border: 1px solid rgba(255, 245, 250, 0.4);
+            transition: all 0.4s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .testimonial-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 
+                10px 10px 22px rgba(180, 140, 155, 0.2),
+                -10px -10px 22px rgba(255, 245, 250, 0.9);
+        }
+
+        .testimonial-card .stars {
+            color: #d47a9a;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+
+        .testimonial-card p {
+            color: #4a2e3b;
+            font-style: italic;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .testimonial-card .client-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .testimonial-card .client-info .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f0e8ed, #e8dce3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #b34a6e;
+            font-size: 0.85rem;
+            box-shadow: 
+                3px 3px 8px rgba(180, 140, 155, 0.15),
+                -3px -3px 8px rgba(255, 245, 250, 0.7);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .testimonial-card .client-info .details .name {
+            font-weight: 700;
+            color: #2d1b26;
+            font-size: 0.92rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .testimonial-card .client-info .details .role {
+            color: #8a5e70;
+            font-size: 0.78rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* ===== TRUST BADGES ===== */
+        .trust-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            padding: 1.5rem;
+            background: #f0e8ed;
+            border-radius: 2rem;
+            box-shadow: 
+                inset 3px 3px 8px rgba(180, 140, 155, 0.1),
+                inset -3px -3px 8px rgba(255, 245, 250, 0.7);
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s;
+        }
+
+        .trust-badges.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #4a2e3b;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: transform 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .trust-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .trust-badge i {
+            color: #b34a6e;
+            font-size: 1.2rem;
+        }
+
+        /* ===== CONTACT ===== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.92rem;
+            color: #2d1b26;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.2rem;
+            background: #f0e8ed;
+            box-shadow: 
+                4px 4px 10px rgba(180, 140, 155, 0.1),
+                -4px -4px 10px rgba(255, 245, 250, 0.7);
+            border: 1px solid rgba(255, 245, 250, 0.3);
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateX(-20px);
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .contact-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .contact-item:hover {
+            transform: translateX(6px);
+            box-shadow: 
+                6px 6px 14px rgba(180, 140, 155, 0.15),
+                -6px -6px 14px rgba(255, 245, 250, 0.8);
+        }
+
+        .contact-item i {
+            font-size: 1.2rem;
+            width: 2rem;
+            color: #c45a7a;
+        }
+
+        .contact-item a {
+            color: #2d1b26;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .contact-item a:hover {
+            color: #b34a6e;
+        }
+
+        .contact-info-box {
+            background: #f0e8ed;
+            padding: 2rem;
+            border-radius: 2rem;
+            box-shadow: 
+                inset 3px 3px 8px rgba(180, 140, 155, 0.1),
+                inset -3px -3px 8px rgba(255, 245, 250, 0.7);
+            border: 1px solid rgba(255, 245, 250, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s;
+        }
+
+        .contact-info-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .contact-info-box .contact-item {
+            box-shadow: none;
+            background: transparent;
+            padding: 0.5rem 0;
+            border: none;
+            opacity: 1;
+            transform: none;
+        }
+
+        .contact-info-box .contact-item i {
+            width: 2.2rem;
+        }
+
+        /* ===== CONTACT FORM ===== */
+        .contact-form-section {
+            background: #f0e8ed;
+            padding: 2.5rem;
+            border-radius: 2rem;
+            box-shadow: 
+                6px 6px 14px rgba(180, 140, 155, 0.15),
+                -6px -6px 14px rgba(255, 245, 250, 0.8);
+            border: 1px solid rgba(255, 245, 250, 0.4);
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #2d1b26;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: none;
+            border-radius: 60px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.95rem;
+            background: #f0e8ed;
+            color: #2d1b26;
+            box-shadow: 
+                inset 3px 3px 8px rgba(180, 140, 155, 0.12),
+                inset -3px -3px 8px rgba(255, 245, 250, 0.7);
+            transition: all 0.3s;
+        }
+
+        .form-group textarea {
+            border-radius: 1.5rem;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 
+                inset 4px 4px 12px rgba(180, 140, 155, 0.2),
+                inset -4px -4px 12px rgba(255, 245, 250, 0.8);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #b8a0aa;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            padding-top: 2rem;
+            font-size: 0.85rem;
+            color: #8a5e70;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid rgba(180, 140, 155, 0.15);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+        }
+
+        .footer a {
+            color: #4a2e3b;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #b34a6e;
+        }
+
+        /* ===== BACK TO TOP BUTTON ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d47a9a, #b34a6e);
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(179, 74, 110, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 9999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(179, 74, 110, 0.5);
+        }
+
+        /* ===== CUSTOM CURSOR ===== */
+        * {
+            cursor: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #d47a9a, #b34a6e);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transition: width 0.25s, height 0.25s, background 0.3s;
+            box-shadow: 0 0 20px rgba(179, 74, 110, 0.4);
+        }
+
+        .cursor-ring {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(179, 74, 110, 0.35);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99998;
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s, transform 0.15s;
+            backdrop-filter: blur(2px);
+            background: rgba(212, 122, 154, 0.04);
+        }
+
+        .cursor-dot.hover {
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle, #e08aaa, #c45a7a);
+            box-shadow: 0 0 30px rgba(179, 74, 110, 0.6);
+        }
+
+        .cursor-ring.hover {
+            width: 56px;
+            height: 56px;
+            border-color: #c45a7a;
+            border-width: 2.5px;
+            background: rgba(212, 122, 154, 0.08);
+            transform: scale(1.1);
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            * {
+                cursor: auto;
+            }
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+        }
+
+        input,
+        textarea,
+        button,
+        a {
+            cursor: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .about-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .testimonial-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .project-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+                position: relative;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+            .profile {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.2rem;
+            }
+            .profile-info h1 {
+                font-size: 2rem;
+            }
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+            .project-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            .trust-badges {
+                gap: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
+            .contact-form-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+            .project-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            .btn-group .btn-neumorph {
+                width: 100%;
+                justify-content: center;
+            }
+            .back-to-top {
+                bottom: 1rem;
+                right: 1rem;
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SCROLL PROGRESS BAR ===== -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- ===== PRELOADER ===== -->
+    <div class="preloader" id="preloader">
+        <div class="loader-heart"><i class="fas fa-heart"></i></div>
+        <div class="loader-text">Loading</div>
+    </div>
+
+    <!-- ===== BACK TO TOP ===== -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- ===== HEADER ===== -->
+        <header class="top-bar" id="topBar">
+            <span class="logo">A.O.</span>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#testimonials" class="nav-link">Testimonials</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+        </header>
+
+        <!-- ===== HOME / PROFILE ===== -->
+        <section class="profile" id="home">
+            <div class="profile-avatar">
+                <img src="https://scontent.fdvo2-1.fna.fbcdn.net/v/t39.30808-6/774380741_122123330265319454_552259769200785412_n.jpg?stp=dst-jpg_tt6&cstp=mx1448x1086&ctp=s1448x1086&_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeEJNSOus9vDC0JLoh_A1GrgsnZYWyEjzbeydlhbISPNt4LbOXJc8KqgGRWd7ftXn8n1DvQMWxSWH-GKEold9xsQ&_nc_ohc=NJ-96KOIGsYQ7kNvwEWz2-f&_nc_oc=AdpI3pVvuq2RUqttZ_nEk38a3T-U4jXi0150P7lO8RUuk2YeSJofzf4AZAwHaWhRetJl9ly8k1Q22qKZMg6j8zv7&_nc_zt=23&_nc_ht=scontent.fdvo2-1.fna&_nc_gid=qOoSk1rj5bFmdbsoK06Tuw&_nc_ss=7b2a8&oh=00_AQJeK9ZvWYcCNr7F4ITOfuT6WGg6qsjiCJh7zRQ-_MuTFw&oe=6AA5E1E4" alt="Aubrey Ocampo">
+            </div>
+            <div class="profile-info">
+                <h1>Aubrey Ocampo</h1>
+                <div class="tagline">
+                    <span class="typing-text" id="typingText"></span>
+                </div>
+                <p class="bio">
+                    I help businesses scale with reliable, results-driven virtual support. From managing customer
+                    support tickets to generating qualified leads, creating engaging content, and optimizing email
+                    campaigns — I deliver professional support that builds trust and drives growth.
+                </p>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com/in/aubrey-ocampo-4113a9413/" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.facebook.com/bhbinternationalcompany.me" aria-label="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.upwork.com/freelancers/~01dbe98939ab6aef72" aria-label="Upwork"><i class="fa fa-user" aria-hidden="true"></i></a>
+                    <a href="mailto:madlangbayanbry@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+                <div class="btn-group">
+                    <a href="#services" class="btn-neumorph primary"><i class="fas fa-briefcase"></i> View Services</a>
+                    <a href="#contact" class="btn-neumorph secondary"><i class="fas fa-paper-plane"></i> Hire Me</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TRUST BADGES ===== -->
+        <div class="trust-badges" id="trustBadges">
+            <span class="trust-badge"><i class="fas fa-clock"></i> 24/7 Support Availability</span>
+            <span class="trust-badge"><i class="fas fa-check-circle"></i> 50+ Projects Completed</span>
+            <span class="trust-badge"><i class="fas fa-user-check"></i> 30+ Satisfied Clients</span>
+            <span class="trust-badge"><i class="fas fa-globe"></i> Global Time Zone Flexibility</span>
+        </div>
+
+        <!-- ===== ABOUT ===== -->
+        <h2 class="section-title" id="about"><i class="fas fa-user" style="margin-right: 0.7rem; color: #d47a9a;"></i> About Me</h2>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>
+                    I'm Aubrey Ocampo, a dedicated Virtual Assistant with expertise in customer support,
+                    lead generation, social media management, and email marketing. I help businesses streamline
+                    operations, build customer trust, and generate consistent growth through reliable virtual support.
+                </p>
+                <p>
+                    With experience across multiple tools and platforms, I bring a professional, results-driven
+                    approach to every project. I understand that businesses need dependable support they can trust —
+                    and I deliver exactly that.
+                </p>
+                <p>
+                    <strong>📍 Location:</strong> Alfonso, Cavite, Philippines
+                </p>
+                <p>
+                    <strong>⏰ Availability:</strong> 24/7 Support · Flexible across time zones
+                </p>
+            </div>
+            <div class="about-stats">
+                <div class="stat-box">
+                    <span class="number" data-count="30">0</span>
+                    <span class="label">Clients Served</span>
+                </div>
+                <div class="stat-box">
+                    <span class="number" data-count="50">0</span>
+                    <span class="label">Projects Completed</span>
+                </div>
+                <div class="stat-box">
+                    <span class="number">24/7</span>
+                    <span class="label">Availability</span>
+                </div>
+                <div class="stat-box">
+                    <span class="number" data-count="100">0</span>
+                    <span class="label">% Satisfaction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SERVICES ===== -->
+        <h2 class="section-title" id="services"><i class="fas fa-concierge-bell" style="margin-right: 0.7rem; color: #d47a9a;"></i> My Services</h2>
+        <p class="section-subtitle">Professional virtual support designed to help your business scale and build trust</p>
+
+        <div class="card-grid">
+            <!-- Service 1: Customer Support / Community VA -->
+            <div class="card">
+                <h3><i class="fas fa-headset"></i> Customer Support / Community VA</h3>
+                <div class="meta">Support that builds trust</div>
+                <p>Email/chat support, ticket triage, refunds, FAQ management, community moderation. I provide reliable, professional support that keeps your customers happy and your brand trusted.</p>
+                <div class="tools-list">
+                    <span class="tool-tag">Zendesk</span>
+                    <span class="tool-tag">Gorgias</span>
+                    <span class="tool-tag">Intercom</span>
+                    <span class="tool-tag">Slack</span>
+                    <span class="tool-tag">Discord</span>
+                </div>
+                <span class="why-badge"><i class="fas fa-star"></i> Why: Support never goes away, and companies prefer remote VAs over full-time hires for off-hours coverage.</span>
+            </div>
+
+            <!-- Service 2: Social Media & Content VA -->
+            <div class="card">
+                <h3><i class="fas fa-hashtag"></i> Social Media &amp; Content VA</h3>
+                <div class="meta">Consistent content that engages</div>
+                <p>Content creation, scheduling, engagement, short-form video editing, captions, basic analytics. I keep your brand visible and engaging across all platforms.</p>
+                <div class="tools-list">
+                    <span class="tool-tag">Canva</span>
+                    <span class="tool-tag">CapCut</span>
+                    <span class="tool-tag">Later</span>
+                    <span class="tool-tag">Buffer</span>
+                    <span class="tool-tag">Meta Business Suite</span>
+                </div>
+                <span class="why-badge"><i class="fas fa-star"></i> Why: Businesses want consistent content but don't need a full social media manager.</span>
+            </div>
+
+            <!-- Service 3: Lead Generation / Sales Support VA -->
+            <div class="card">
+                <h3><i class="fas fa-bullhorn"></i> Lead Generation / Sales Support VA</h3>
+                <div class="meta">Fuel your sales pipeline</div>
+                <p>Prospect research, list building, cold email/LinkedIn outreach, CRM updates, appointment setting support. I help B2B companies, agencies, and coaches build a consistent pipeline.</p>
+                <div class="tools-list">
+                    <span class="tool-tag">Apollo</span>
+                    <span class="tool-tag">LinkedIn Sales Navigator</span>
+                    <span class="tool-tag">Instantly</span>
+                    <span class="tool-tag">HubSpot</span>
+                </div>
+                <span class="why-badge"><i class="fas fa-star"></i> Why: B2B companies, agencies, and coaches constantly need pipeline help.</span>
+            </div>
+
+            <!-- Service 4: Email Marketing / Klaviyo VA -->
+            <div class="card">
+                <h3><i class="fas fa-envelope"></i> Email Marketing / Klaviyo VA</h3>
+                <div class="meta">Automated email that converts</div>
+                <p>Email campaign setup, flows, segmentation, A/B testing, copywriting, list management. I build and manage email systems that nurture leads and drive sales.</p>
+                <div class="tools-list">
+                    <span class="tool-tag">Klaviyo</span>
+                    <span class="tool-tag">Mailchimp</span>
+                    <span class="tool-tag">ConvertKit</span>
+                    <span class="tool-tag">ActiveCampaign</span>
+                </div>
+                <span class="why-badge"><i class="fas fa-star"></i> Why: Email marketing delivers the highest ROI, but businesses don't have time to manage it.</span>
+            </div>
+        </div>
+
+        <!-- ===== SKILLS ===== -->
+        <h2 class="section-title" id="skills"><i class="fas fa-tools" style="margin-right: 0.7rem; color: #d47a9a;"></i> Tools &amp; Platforms</h2>
+        <div class="skills-wrapper" id="skillsWrapper">
+            <!-- Support Tools -->
+            <span class="skill-chip">Zendesk</span>
+            <span class="skill-chip">Gorgias</span>
+            <span class="skill-chip">Intercom</span>
+            <span class="skill-chip">Slack</span>
+            <span class="skill-chip">Discord</span>
+            <!-- Social Media Tools -->
+            <span class="skill-chip">Canva</span>
+            <span class="skill-chip">CapCut</span>
+            <span class="skill-chip">Later</span>
+            <span class="skill-chip">Buffer</span>
+            <span class="skill-chip">Meta Business Suite</span>
+            <!-- Lead Gen Tools -->
+            <span class="skill-chip">Apollo</span>
+            <span class="skill-chip">LinkedIn Sales Navigator</span>
+            <span class="skill-chip">Instantly</span>
+            <span class="skill-chip">HubSpot</span>
+            <!-- Email Tools -->
+            <span class="skill-chip">Klaviyo</span>
+            <span class="skill-chip">Mailchimp</span>
+            <span class="skill-chip">ConvertKit</span>
+            <span class="skill-chip">ActiveCampaign</span>
+            <!-- General -->
+            <span class="skill-chip">Google Workspace</span>
+            <span class="skill-chip">Microsoft 365</span>
+            <span class="skill-chip">Make.com</span>
+            <span class="skill-chip">ChatGPT</span>
+            <span class="skill-chip">Calendly</span>
+            <span class="skill-chip">Zapier</span>
+        </div>
+
+        <!-- ===== PROJECT SHOWCASE ===== -->
+        <h2 class="section-title" id="projects"><i class="fas fa-folder-open" style="margin-right: 0.7rem; color: #d47a9a;"></i> Portfolio Showcase</h2>
+        <div class="project-grid">
+            <a href="#" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-headset"></i></div>
+                <h4>Customer Support</h4>
+                <p>Email/chat, ticket triage, FAQ management</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="#" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-bullhorn"></i></div>
+                <h4>Lead Generation</h4>
+                <p>Prospecting, outreach, CRM management</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="#" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-envelope"></i></div>
+                <h4>Email Marketing</h4>
+                <p>Campaigns, flows, automations, copywriting</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="https://drive.google.com/drive/folders/1pm2U1gEJ-PyHr2U6vDaJ2zkFWAtSrn6i" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-film"></i></div>
+                <h4>Motion Graphics</h4>
+                <p>Animation &amp; motion design projects</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="https://drive.google.com/drive/u/0/folders/1Dzq9aPJDEKkH7h_mTtaSLV-MAvQ8kY-S" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fa fa-folder" aria-hidden="true"></i></div>
+                <h4>Flyers &amp; Posters</h4>
+                <p>Marketing materials &amp; social graphics</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="https://drive.google.com/drive/u/0/folders/1aUOYVkXfJEzgHf_ZlP8YS7BbcUKFI4U8" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-paint-brush"></i></div>
+                <h4>Logos &amp; Branding</h4>
+                <p>Canva, Photoshop, Ideogram designs</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="https://drive.google.com/drive/folders/14r3K3ml5MDFQYzOxX0cTUnQlVKzC7PoV" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-robot"></i></div>
+                <h4>AI-Generated Videos</h4>
+                <p>Kling AI creations &amp; AI content</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <a href="https://drive.google.com/drive/folders/1n8j1xr2yFuo8bAL1EqPCeISh3IbRMW2u" target="_blank" class="project-card">
+                <div class="project-icon"><i class="fas fa-video"></i></div>
+                <h4>Video Edits</h4>
+                <p>Color grading, transitions, sound design</p>
+                <span class="arrow-link"><i class="fas fa-arrow-right"></i></span>
+            </a>
+        </div>
+
+        <!-- ===== TESTIMONIALS ===== -->
+        <h2 class="section-title" id="testimonials"><i class="fas fa-quote-left" style="margin-right: 0.7rem; color: #d47a9a;"></i> What Clients Say</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Aubrey has been a lifesaver for our customer support. She handles tickets professionally, responds quickly, and our CSAT scores have improved significantly. Highly recommend!"</p>
+                <div class="client-info">
+                    <div class="avatar">JD</div>
+                    <div class="details">
+                        <div class="name">James Delaney</div>
+                        <div class="role">Customer Support Lead</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Aubrey's lead generation work helped us build a strong sales pipeline. Her LinkedIn outreach and prospect research are top-notch. She's an asset to any B2B team."</p>
+                <div class="client-info">
+                    <div class="avatar">SM</div>
+                    <div class="details">
+                        <div class="name">Sarah Mitchell</div>
+                        <div class="role">Sales Director</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Aubrey manages our social media and it's been amazing. Consistent content, great engagement, and she really understands our brand voice. She's like part of the team."</p>
+                <div class="client-info">
+                    <div class="avatar">TR</div>
+                    <div class="details">
+                        <div class="name">Thomas Rivera</div>
+                        <div class="role">Marketing Manager</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Our email marketing has never performed better. Aubrey set up our Klaviyo flows and they've been generating consistent revenue. She's incredibly knowledgeable and reliable."</p>
+                <div class="client-info">
+                    <div class="avatar">MC</div>
+                    <div class="details">
+                        <div class="name">Michelle Chen</div>
+                        <div class="role">E-commerce Owner</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Aubrey is the most reliable VA I've worked with. Her community management skills are excellent and she handles our Discord and Slack with professionalism. Highly recommend her services."</p>
+                <div class="client-info">
+                    <div class="avatar">DW</div>
+                    <div class="details">
+                        <div class="name">David Williamson</div>
+                        <div class="role">Community Manager</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Working with Aubrey has been a game-changer. She handles our lead generation and email outreach seamlessly. Her attention to detail and proactive approach make her stand out."</p>
+                <div class="client-info">
+                    <div class="avatar">LP</div>
+                    <div class="details">
+                        <div class="name">Laura Peterson</div>
+                        <div class="role">CEO, Startup</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CONTACT ===== -->
+        <h2 class="section-title" id="contact"><i class="fas fa-envelope" style="margin-right: 0.7rem; color: #d47a9a;"></i> Contact Me</h2>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:madlangbayanbry@gmail.com">madlangbayanbry@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <a href="tel:+639653905014">+63 965 3905 014</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Alfonso, Cavite, Philippines</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                    <a>Aubrey M. Ocampo | +63 965 3905 014</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-linkedin-in"></i>
+                    <a href="https://www.linkedin.com/in/aubrey-ocampo-4113a9413/" target="_blank">linkedin.com/in/aubreyocampo</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <a href="https://www.upwork.com/freelancers/~01dbe98939ab6aef72" target="_blank">upwork.com/in/aubreyocampo</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-facebook"></i>
+                    <a href="https://www.facebook.com/bhbinternationalcompany.me" target="_blank">facebook.com/fl/aubreyocampo</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <span>English · Tagalog · Basic Spanish</span>
+                </div>
+            </div>
+            <div class="contact-info-box">
+                <div style="margin-bottom: 0.5rem;">
+                    <h3 style="color: #2d1b26; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.3rem;">Ready to Scale Your Business?</h3>
+                    <p style="color: #8a5e70; font-size: 0.95rem; margin-top: 0.3rem;">Let's discuss how I can help your team grow with reliable virtual support</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>24/7 Support Available</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <span>Flexible across all time zones</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-reply-all"></i>
+                    <span>Response within 24 hours</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>100% satisfaction guaranteed</span>
+                </div>
+                <div style="margin-top: 0.8rem; padding: 1rem; background: linear-gradient(135deg, #fce8f0, #f0e8ed); border-radius: 1.2rem; border: 1px solid rgba(212, 122, 154, 0.2);">
+                    <p style="font-size: 0.9rem; color: #4a2e3b; text-align: center;">
+                        <i class="fas fa-heart" style="color: #c45a7a;"></i>
+                        Let's build something amazing together.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CONTACT FORM ===== -->
+        <div class="contact-form-section">
+            <h3 style="text-align: center; margin-bottom: 0.5rem; font-family: 'Poppins', sans-serif; color: #2d1b26; font-size: 1.3rem;">
+                <i class="fas fa-paper-plane" style="color: #d47a9a;"></i> Send Me a Message
+            </h3>
+            <p style="text-align: center; color: #8a5e70; font-size: 0.9rem; margin-bottom: 1.5rem; font-family: 'Quicksand', sans-serif;">
+                Have a project in mind? Fill out the form below and I'll reply within 24 hours.
+            </p>
+
+            <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+                <!-- Your Access Key -->
+                <input type="hidden" name="access_key" value="a6d3d3ac-2fee-4157-9906-4818e8f03d92">
+
+                <!-- Email Settings -->
+                <input type="hidden" name="subject" value="New Message from Aubrey Ocampo Portfolio">
+                <input type="hidden" name="from_name" value="Aubrey Ocampo Portfolio">
+                <input type="hidden" name="replyto" value="email">
+
+                <!-- Form Fields -->
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. John Smith" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" name="email" placeholder="e.g. john@company.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Your Message</label>
+                    <textarea id="message" name="message" placeholder="Tell me about your project or what you need help with..." required></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-neumorph primary" style="width: 100%; justify-content: center;">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+
+            <div id="formResult" style="margin-top: 1rem; text-align: center; font-family: 'Quicksand', sans-serif; font-weight: 600;"></div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <span>© 2026 Aubrey Ocampo · <i class="fas fa-heart" style="color: #c45a7a;"></i> Virtual Assistant</span>
+            <span>
+                <a href="#home">Home</a> ·
+                <a href="#services">Services</a> ·
+                <a href="#contact">Contact</a>
+            </span>
+        </footer>
+
+    </div>
+
+    <!-- ============================================================
+         JAVASCRIPT ENHANCEMENTS
+         ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            /* ============================================================
+               1. PRELOADER
+               ============================================================ */
+            window.addEventListener('load', () => {
+                const preloader = document.getElementById('preloader');
+                if (preloader) {
+                    setTimeout(() => {
+                        preloader.classList.add('hidden');
+                    }, 600);
+                }
+            });
+
+            /* ============================================================
+               2. SCROLL PROGRESS BAR
+               ============================================================ */
+            const scrollProgress = document.getElementById('scrollProgress');
+
+            function updateScrollProgress() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (scrollTop / scrollHeight) * 100;
+                if (scrollProgress) {
+                    scrollProgress.style.width = scrolled + '%';
+                }
+            }
+
+            window.addEventListener('scroll', updateScrollProgress, { passive: true });
+            updateScrollProgress();
+
+            /* ============================================================
+               3. STICKY HEADER SHADOW
+               ============================================================ */
+            const topBar = document.getElementById('topBar');
+
+            window.addEventListener('scroll', () => {
+                if (topBar) {
+                    if (window.scrollY > 50) {
+                        topBar.classList.add('scrolled');
+                    } else {
+                        topBar.classList.remove('scrolled');
+                    }
+                }
+            }, { passive: true });
+
+            /* ============================================================
+               4. TYPING EFFECT FOR TAGLINE
+               ============================================================ */
+            const typingText = document.getElementById('typingText');
+            const phrases = [
+                'Virtual Assistant · Customer Support',
+                'Lead Generation · Sales Support',
+                'Social Media · Content Creation',
+                'Email Marketing · Klaviyo Expert'
+            ];
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            let typingSpeed = 80;
+
+            function typeEffect() {
+                if (!typingText) return;
+
+                const currentPhrase = phrases[phraseIndex];
+
+                if (isDeleting) {
+                    typingText.textContent = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+                    typingSpeed = 40;
+                } else {
+                    typingText.textContent = currentPhrase.substring(0, charIndex + 1);
+                    charIndex++;
+                    typingSpeed = 80;
+                }
+
+                if (!isDeleting && charIndex === currentPhrase.length) {
+                    isDeleting = true;
+                    typingSpeed = 2000;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    typingSpeed = 500;
+                }
+
+                setTimeout(typeEffect, typingSpeed);
+            }
+
+            if (typingText) {
+                setTimeout(typeEffect, 1200);
+            }
+
+            /* ============================================================
+               5. SCROLL REVEAL ANIMATIONS
+               ============================================================ */
+            const revealElements = document.querySelectorAll(
+                '.card, .skill-chip, .stat-box, .project-card, .testimonial-card, .trust-badges, .contact-item, .contact-info-box'
+            );
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 50);
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            revealElements.forEach((el) => {
+                revealObserver.observe(el);
+            });
+
+            /* ============================================================
+               6. ANIMATED COUNTER FOR STATS
+               ============================================================ */
+            const counters = document.querySelectorAll('.stat-box .number[data-count]');
+
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const target = parseInt(el.getAttribute('data-count'), 10);
+                        const duration = 1500;
+                        const stepTime = 16;
+                        const steps = duration / stepTime;
+                        const increment = target / steps;
+                        let current = 0;
+
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                if (target === 100) {
+                                    el.textContent = '100%';
+                                } else {
+                                    el.textContent = target + '+';
+                                }
+                                clearInterval(timer);
+                            } else {
+                                el.textContent = Math.floor(current) + '+';
+                            }
+                        }, stepTime);
+
+                        counterObserver.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach((counter) => {
+                counterObserver.observe(counter);
+            });
+
+            /* ============================================================
+               7. ACTIVE NAV LINK ON SCROLL
+               ============================================================ */
+            const sections = document.querySelectorAll('section[id], h2[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const navObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach((link) => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.3,
+                rootMargin: '-80px 0px -60% 0px'
+            });
+
+            sections.forEach((section) => {
+                navObserver.observe(section);
+            });
+
+            /* ============================================================
+               8. BACK TO TOP BUTTON
+               ============================================================ */
+            const backToTop = document.getElementById('backToTop');
+
+            window.addEventListener('scroll', () => {
+                if (backToTop) {
+                    if (window.scrollY > 400) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                }
+            }, { passive: true });
+
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            /* ============================================================
+               9. SMOOTH SCROLL FOR ANCHOR LINKS
+               ============================================================ */
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId.length > 1) {
+                        const targetEl = document.querySelector(targetId);
+                        if (targetEl) {
+                            e.preventDefault();
+                            const offsetTop = targetEl.getBoundingClientRect().top + window.pageYOffset - 100;
+                            window.scrollTo({
+                                top: offsetTop,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+
+            /* ============================================================
+               10. CUSTOM CURSOR WITH SMOOTH TRAIL
+               ============================================================ */
+            const dot = document.createElement('div');
+            dot.classList.add('cursor-dot');
+            document.body.appendChild(dot);
+
+            const ring = document.createElement('div');
+            ring.classList.add('cursor-ring');
+            document.body.appendChild(ring);
+
+            let mouseX = 0, mouseY = 0;
+            let ringX = 0, ringY = 0;
+            let dotX = 0, dotY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function animateCursor() {
+                dotX += (mouseX - dotX) * 0.35;
+                dotY += (mouseY - dotY) * 0.35;
+                dot.style.left = dotX - 4 + 'px';
+                dot.style.top = dotY - 4 + 'px';
+
+                ringX += (mouseX - ringX) * 0.12;
+                ringY += (mouseY - ringY) * 0.12;
+                ring.style.left = ringX - 20 + 'px';
+                ring.style.top = ringY - 20 + 'px';
+
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            const interactiveEls = document.querySelectorAll(
+                'a, button, .btn-neumorph, .card, .skill-chip, .testimonial-card, .stat-box, .contact-item, .project-card, .social-icons a, input, textarea'
+            );
+
+            interactiveEls.forEach((el) => {
+                el.addEventListener('mouseenter', () => {
+                    dot.classList.add('hover');
+                    ring.classList.add('hover');
+                });
+                el.addEventListener('mouseleave', () => {
+                    dot.classList.remove('hover');
+                    ring.classList.remove('hover');
+                });
+            });
+
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                dot.style.display = 'none';
+                ring.style.display = 'none';
+                document.body.style.cursor = 'auto';
+            }
+
+            /* ============================================================
+               11. TILT EFFECT ON CARDS
+               ============================================================ */
+            const tiltCards = document.querySelectorAll('.card, .project-card, .testimonial-card');
+
+            tiltCards.forEach((card) => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -3;
+                    const rotateY = ((x - centerX) / centerX) * 3;
+
+                    card.style.transform = `translateY(-8px) perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+
+            /* ============================================================
+               12. SPARKLE EFFECT ON CLICK
+               ============================================================ */
+            document.addEventListener('click', (e) => {
+                // Don't sparkle on form inputs
+                if (e.target.matches('input, textarea, button[type="submit"]')) return;
+
+                const sparkleEmojis = ['✨', '⭐', '🌟', '💫', '✧', '✦', '♥', '✿', '🌸', '💕'];
+                const colors = ['#d4729a', '#ff6b9d', '#f5a0c0', '#b34a6e', '#ff8fab', '#ffb3c6'];
+
+                const numParticles = 6 + Math.floor(Math.random() * 6);
+
+                for (let i = 0; i < numParticles; i++) {
+                    const particle = document.createElement('div');
+                    particle.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+                    particle.style.position = 'fixed';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '99999';
+                    particle.style.fontSize = (10 + Math.random() * 14) + 'px';
+                    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.left = e.clientX + 'px';
+                    particle.style.top = e.clientY + 'px';
+                    particle.style.transition = 'all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    particle.style.opacity = '1';
+
+                    document.body.appendChild(particle);
+
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = 50 + Math.random() * 80;
+                    const tx = Math.cos(angle) * distance;
+                    const ty = Math.sin(angle) * distance;
+
+                    requestAnimationFrame(() => {
+                        particle.style.transform = `translate(${tx}px, ${ty}px) scale(0) rotate(${Math.random() * 360}deg)`;
+                        particle.style.opacity = '0';
+                    });
+
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 950);
+                }
+            });
+
+            /* ============================================================
+               13. SKILL CHIP STAGGER ANIMATION
+               ============================================================ */
+            const skillChips = document.querySelectorAll('.skill-chip');
+            skillChips.forEach((chip, index) => {
+                chip.style.transitionDelay = (index * 30) + 'ms';
+            });
+
+            /* ============================================================
+               14. CONTACT FORM SUBMISSION
+               ============================================================ */
+            const contactForm = document.getElementById('contactForm');
+            const formResult = document.getElementById('formResult');
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(contactForm);
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    submitBtn.disabled = true;
+                    formResult.innerHTML = '';
+
+                    try {
+                        const response = await fetch(contactForm.action, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            formResult.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> Message sent! I\'ll reply within 24 hours.</span>';
+                            contactForm.reset();
+
+                            // Sparkle celebration
+                            for (let i = 0; i < 15; i++) {
+                                setTimeout(() => {
+                                    const s = document.createElement('div');
+                                    s.textContent = ['✨', '⭐', '🌟', '💫', '💖'][Math.floor(Math.random() * 5)];
+                                    s.style.position = 'fixed';
+                                    s.style.pointerEvents = 'none';
+                                    s.style.zIndex = '99999';
+                                    s.style.fontSize = (15 + Math.random() * 15) + 'px';
+                                    s.style.left = (window.innerWidth / 2 + (Math.random() - 0.5) * 300) + 'px';
+                                    s.style.top = (window.innerHeight / 2 + (Math.random() - 0.5) * 200) + 'px';
+                                    s.style.transition = 'all 1.2s ease-out';
+                                    document.body.appendChild(s);
+                                    requestAnimationFrame(() => {
+                                        s.style.transform = `translate(${(Math.random() - 0.5) * 200}px, -150px) scale(0)`;
+                                        s.style.opacity = '0';
+                                    });
+                                    setTimeout(() => s.remove(), 1300);
+                                }, i * 60);
+                            }
+                        } else {
+                            formResult.innerHTML = '<span style="color: #b34a6e;"><i class="fas fa-exclamation-circle"></i> Something went wrong. Please try again.</span>';
+                        }
+                    } catch (error) {
+                        formResult.innerHTML = '<span style="color: #b34a6e;"><i class="fas fa-exclamation-circle"></i> Network error. Please check your connection.</span>';
+                    }
+
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    setTimeout(() => {
+                        formResult.innerHTML = '';
+                    }, 8000);
+                });
+            }
+
+            /* ============================================================
+               15. CONSOLE BRANDING
+               ============================================================ */
+            console.log(
+                '%c✨ Aubrey Ocampo · Virtual Assistant',
+                'color: #b34a6e; font-size: 18px; font-weight: bold; padding: 10px; font-family: Poppins, sans-serif;'
+            );
+            console.log(
+                '%c🚀 Portfolio enhanced with JavaScript!',
+                'color: #8a5e70; font-size: 13px; font-family: Quicksand, sans-serif;'
+            );
+            console.log(
+                '%c💼 Customer Support · Lead Generation · Social Media · Email Marketing',
+                'color: #d47a9a; font-size: 12px; font-family: Quicksand, sans-serif;'
+            );
+            console.log(
+                '%c📧 Contact form is ready — replace YOUR-ACCESS-KEY-HERE with your Web3Forms key',
+                'color: #4CAF50; font-size: 12px; font-family: Quicksand, sans-serif;'
+            );
+
+        })();
+    </script>
+
+</body>
+</html>
